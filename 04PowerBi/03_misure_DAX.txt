@@ -1,0 +1,63 @@
+// =====================================================================
+//  MISURE DAX – Progetto Spider-Man 🕷️
+//  Tabella vuota "_Misure" → Nuova misura → incolla una misura alla volta
+// =====================================================================
+
+// ---------- PANORAMICA ----------
+Incasso Franchise (mld $) = DIVIDE ( SUM ( incassi_franchise[incasso_milioni_usd] ), 1000 )
+
+Quota Voce % =
+DIVIDE (
+    SUM ( incassi_franchise[incasso_milioni_usd] ),
+    CALCULATE ( SUM ( incassi_franchise[incasso_milioni_usd] ), ALL ( incassi_franchise ) )
+)
+
+N Film = COUNTROWS ( film )
+
+N Videogiochi = COUNTROWS ( videogiochi )
+
+Episodi TV = SUM ( serie_tv[episodi] )
+
+Numeri Fumetti = SUM ( fumetti_testate[numeri_pubblicati] )
+
+N Uscite = COUNTROWS ( timeline_media )
+
+// ---------- FILM ----------
+Box Office Totale (mln $) = SUM ( film[incasso_mondiale_mln] )
+
+Incasso Medio (mln $) = AVERAGE ( film[incasso_mondiale_mln] )
+
+Moltiplicatore Budget = DIVIDE ( SUM ( film[incasso_mondiale_mln] ), SUM ( film[budget_mln] ) )
+
+Profitto Lordo (mln $) = SUM ( film[incasso_mondiale_mln] ) - SUM ( film[budget_mln] )
+
+Quota Estero % = DIVIDE ( SUM ( film[incasso_estero_mln] ), SUM ( film[incasso_mondiale_mln] ) )
+
+Biglietti (mln) = SUM ( film[biglietti_mondo_mln] )
+
+Rotten Tomatoes Medio = DIVIDE ( AVERAGE ( film[rotten_tomatoes_pct] ), 100 )
+
+Film Più Visto =
+VAR Top = TOPN ( 1, film, film[incasso_mondiale_mln], DESC )
+RETURN MAXX ( Top, film[titolo] )
+
+// ---------- GOOGLE TRENDS ----------
+Interesse Medio = AVERAGE ( trends_media[interesse] )
+
+Interesse Fumetto = AVERAGE ( trends_fumetto[interesse] )
+
+Picco Medio Uscita = AVERAGEX ( eventi_trends, DIVIDE ( eventi_trends[fumetto_mese_uscita], eventi_trends[fumetto_prima] ) )
+
+Uscite con Crescita = CALCULATE ( COUNTROWS ( eventi_trends ), eventi_trends[differenza] > 0 )
+
+// ---------- VIDEOGIOCHI ----------
+Metacritic Medio = AVERAGE ( videogiochi[metacritic] )
+
+Copie Giochi (mln) = SUM ( videogiochi[copie_milioni] )
+
+Piattaforme Medie = AVERAGE ( videogiochi[n_piattaforme] )
+
+// ---------- PERSONAGGI ----------
+Apparizioni = SUM ( personaggi[apparizioni] )
+
+N Nemici = CALCULATE ( COUNTROWS ( personaggi ), personaggi[ruolo] = "Nemico" )
